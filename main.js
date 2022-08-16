@@ -15,6 +15,22 @@ let backgroundImage,
 
 let spaceshuttlex = canvas.width / 2 - 30;
 let spaceshuttley = canvas.width + 225;
+let bulletList = [];
+
+// 클래스로 바꿀 수 있으니 해보는 것도 나쁘지 않을듯
+function Bullet() {
+  this.x = 0;
+  this.y = 0;
+  this.init = function () {
+    this.x = spaceshuttlex;
+    this.y = spaceshuttley;
+
+    bulletList.push(this);
+  };
+  this.update = function () {
+    this.y -= 7;
+  };
+}
 
 function loadImage() {
   backgroundImage = new Image();
@@ -40,7 +56,16 @@ function setupKeyboardListener() {
   });
   document.addEventListener("keyup", function (event) {
     delete keysDown[event.key];
+
+    if (event.key == " ") {
+      createBullet();
+    }
   });
+}
+
+function createBullet() {
+  let b = new Bullet();
+  b.init();
 }
 
 function update() {
@@ -57,11 +82,18 @@ function update() {
   if (spaceshuttlex >= canvas.width - 60) {
     spaceshuttlex = canvas.width - 60;
   }
+  for (let i = 0; i < bulletList.length; i++) {
+    bulletList[i].update();
+  }
 }
 
 function render() {
   ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
   ctx.drawImage(spaceshuttleImage, spaceshuttlex, spaceshuttley);
+
+  for (let i = 0; i < bulletList.length; i++) {
+    ctx.drawImage(bulletImage, bulletList[i].x, bulletList[i].y);
+  }
 }
 
 function main() {
